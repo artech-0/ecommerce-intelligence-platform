@@ -7,3 +7,4 @@ tensorflow==2.19.0
 shap
 matplotlib
 seaborn
+joblib
