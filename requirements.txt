@@ -3,8 +3,10 @@ pandas==2.2.2
 numpy
 scikit-learn==1.6.1
 xgboost==3.0.5
-tensorflow==2.19.0
+
 shap
 matplotlib
 seaborn
 joblib
+sdv
+google-generativeai
