@@ -10,6 +10,11 @@ import google.generativeai as genai
 from itertools import combinations
 from pathlib import Path
 
+APP_DIR = Path(__file__).parent
+PROJECT_ROOT = APP_DIR.parent
+DATA_PATH = PROJECT_ROOT / "data"
+MODELS_PATH = PROJECT_ROOT / "models"
+REPORTS_PATH = PROJECT_ROOT / "reports"
 st.set_page_config(
     page_title="Superstore Intelligence Engine v2.0",
     layout="wide",
@@ -19,7 +24,7 @@ st.set_page_config(
 # --- Asset Loading Functions ---
 @st.cache_data
 def load_data():
-    df = pd.read_parquet('data/processed/cleaned_superstore_data.parquet')
+    df = pd.read_parquet(DATA_PATH / "processed" / "cleaned_superstore_data.parquet")
     df['Order Date'] = pd.to_datetime(df['Order Date'])
     return df
 
@@ -27,9 +32,9 @@ def load_data():
 def load_models():
     models_path = Path('models')
     models = {
-        "v3_classifier": joblib.load(models_path / "final_v3_profitability_classifier.joblib"),
-        "v3_forecaster": joblib.load(models_path / "final_v3_profit_forecaster.joblib"),
-        "mba_model": joblib.load(models_path / "final_predictive_mba_classifier.joblib")
+        "v3_classifier": joblib.load(MODELS_PATH / "final_v3_profitability_classifier.joblib"),
+        "v3_forecaster": joblib.load(MODELS_PATH / "final_v3_profit_forecaster.joblib"),
+        "mba_model": joblib.load(MODELS_PATH / "final_predictive_mba_classifier.joblib")
     }
     return models
 
@@ -172,7 +177,7 @@ def create_live_features(df_input, lookups, base_df):
 def render_home_page(df):
     st.title("Superstore Intelligence Engine v2.0")
     st.markdown("An integrated MLOps platform for customer intelligence, operational forecasting, and strategic decision support. This page showcases the output of our automated EDA reporting pipeline.")
-    
+    report_path = REPORTS_PATH / "comprehensive_eda_report"
     # --- KPI Section (Unchanged) ---
     st.subheader("Key Performance Indicators")
     col1, col2, col3 = st.columns(3)
@@ -184,7 +189,7 @@ def render_home_page(df):
     # --- EDA Report Showcase ---
     st.subheader("Automated EDA Report Highlights")
     
-    report_path = Path("reports/comprehensive_eda_report")
+    report_path = REPORTS_PATH / "comprehensive_eda_report"
     
     tab1, tab2, tab3 = st.tabs(["Business Analytics", "Strategic Analysis", "General Data Health"])
 
@@ -269,7 +274,7 @@ def render_home_page(df):
                 st.dataframe(num_summary)
             except Exception:
                 st.warning("File not found: numerical_summary.csv")
-                
+
 def render_customer_segmentation_page():
     st.title("Customer Segment Explorer")
     st.markdown("Explore AI-generated personas for customer segments discovered by our advanced deep learning model.")
@@ -352,7 +357,7 @@ def render_strategic_insights_page():
     with c1:
         st.write("**Overall Feature Importance (Bar Plot)**")
         try:
-            st.image('reports/final_shap_plots/shap_summary_bar.png')
+            st.image(str(REPORTS_PATH / "final_shap_plots/shap_summary_bar.png"))
         except Exception:
             st.error("Bar plot image not found.")
     
